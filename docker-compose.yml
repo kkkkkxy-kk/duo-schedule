@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: packages/server/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - WXPUSHER_APP_TOKEN=${WXPUSHER_APP_TOKEN:-}
+      - DB_PATH=/data/duo-schedule.db
+      - SERVE_STATIC=true
+      - BASE_URL=${BASE_URL:-http://localhost:3000}
+    volumes:
+      - duo-data:/data
+    restart: unless-stopped
+
+volumes:
+  duo-data:

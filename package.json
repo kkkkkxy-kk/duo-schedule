@@ -1,0 +1,16 @@
+﻿{
+  "name": "duo-schedule",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w @duo-schedule/server\" \"npm run dev -w @duo-schedule/web\"",
+    "build": "npm run build -w @duo-schedule/web && npm run build -w @duo-schedule/server",
+    "start": "npm run start -w @duo-schedule/server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
