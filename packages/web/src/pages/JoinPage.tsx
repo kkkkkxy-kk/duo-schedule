@@ -23,8 +23,14 @@ export default function JoinPage({ onAuthed }: Props) {
           ? await api.createWorkspace(nickname)
           : await api.joinWorkspace(inviteCode, nickname);
       setToken(data.token);
-      if (mode === 'create') setResult({ inviteCode: data.inviteCode });
-      else onAuthed();
+      if (mode === 'create') {
+        if (!data.inviteCode) {
+          const me = await api.me();
+          setResult({ inviteCode: me.workspace.inviteCode });
+        } else {
+          setResult({ inviteCode: data.inviteCode });
+        }
+      } else onAuthed();
     } catch (err) {
       setError(err instanceof Error ? err.message : '操作失败');
     } finally {
@@ -39,8 +45,19 @@ export default function JoinPage({ onAuthed }: Props) {
           <h1 className="text-center text-xl font-bold text-slate-800">工作区已创建</h1>
           <p className="mt-4 text-center text-slate-600">请将邀请码发给搭档：</p>
           <div className="mt-4 rounded-xl bg-brand-50 py-4 text-center text-3xl font-bold tracking-widest text-brand-600">
-            {result.inviteCode}
+            {result.inviteCode || '加载中…'}
           </div>
+          {result.inviteCode && (
+            <button
+              type="button"
+              onClick={() => {
+                void navigator.clipboard.writeText(result.inviteCode);
+              }}
+              className="mt-3 w-full rounded-xl border border-brand-200 py-2 text-sm text-brand-600"
+            >
+              复制邀请码
+            </button>
+          )}
           <button
             type="button"
             onClick={onAuthed}
@@ -110,7 +127,7 @@ export default function JoinPage({ onAuthed }: Props) {
             disabled={loading}
             className="w-full rounded-xl bg-brand-600 py-3 font-medium text-white active:bg-brand-700 disabled:opacity-50"
           >
-            {loading ? '处理中...' : mode === 'create' ? '创建并进入' : '加入'}
+            {loading ? '处理中...' : mode === 'create' ? '创建工作区' : '加入'}
           </button>
         </form>
       </div>

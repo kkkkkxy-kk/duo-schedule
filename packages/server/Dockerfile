@@ -2,6 +2,9 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+# 国内服务器构建加速
+RUN npm config set registry https://registry.npmmirror.com
+
 COPY package.json ./
 COPY packages/server/package.json ./packages/server/
 COPY packages/web/package.json ./packages/web/
@@ -17,6 +20,8 @@ RUN npm run build -w @duo-schedule/server
 FROM node:22-alpine
 
 WORKDIR /app
+
+RUN npm config set registry https://registry.npmmirror.com
 
 COPY package.json ./
 COPY packages/server/package.json ./packages/server/

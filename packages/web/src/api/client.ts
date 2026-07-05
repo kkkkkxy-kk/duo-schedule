@@ -1,4 +1,5 @@
-const API_BASE = '/api';
+// 开发环境走 Vite 代理 /api；生产环境 Docker 直连同域 API
+const API_BASE = import.meta.env.DEV ? '/api' : '';
 
 function getToken(): string | null {
   return localStorage.getItem('token');
