@@ -39,6 +39,14 @@ export async function authRoutes(app: FastifyInstance) {
       .get(inviteCode) as { id: string } | undefined;
     if (!workspace) throw Object.assign(new Error('邀请码无效'), { statusCode: 404 });
 
+    const existingUser = db
+      .prepare('SELECT id FROM users WHERE workspace_id = ? AND nickname = ?')
+      .get(workspace.id, nickname) as { id: string } | undefined;
+    if (existingUser) {
+      const token = signToken({ userId: existingUser.id, workspaceId: workspace.id });
+      return { token, inviteCode, userId: existingUser.id, workspaceId: workspace.id, nickname };
+    }
+
     const memberCount = db
       .prepare('SELECT COUNT(*) as c FROM users WHERE workspace_id = ?')
       .get(workspace.id) as { c: number };

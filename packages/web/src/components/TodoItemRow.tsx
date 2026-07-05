@@ -2,9 +2,9 @@ import type { Todo } from '../types';
 import LikeButton from './LikeButton';
 
 const PRIORITY_STYLE: Record<string, string> = {
-  high: 'bg-brand-100/80 text-brand-600 border border-brand-200/50',
-  medium: 'bg-accent-50/80 text-accent-500 border border-accent-200/50',
-  low: 'bg-white/50 text-slate-500 border border-white/60',
+  high: 'bg-brand-700 text-white border border-brand-800/40',
+  medium: 'bg-brand-100/90 text-brand-600 border border-brand-200/60',
+  low: 'bg-white/95 text-slate-500 border border-slate-200/70',
 };
 
 const PRIORITY_LABEL: Record<string, string> = {

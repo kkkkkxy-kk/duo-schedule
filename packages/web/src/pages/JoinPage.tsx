@@ -87,23 +87,28 @@ export default function JoinPage({ onAuthed }: Props) {
               mode === 'join' ? 'chip-active' : 'chip-inactive'
             }`}
           >
-            加入工作区
+            加入 / 重新进入
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="glass-card mt-6 space-y-4 p-6">
           {mode === 'join' && (
-            <div>
-              <label className="text-sm font-medium text-brand-700/80">邀请码</label>
-              <input
-                value={inviteCode}
-                onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                placeholder="6 位邀请码"
-                maxLength={6}
-                className="glass-input mt-1 w-full px-4 py-3 text-lg tracking-widest"
-                required
-              />
-            </div>
+            <>
+              <p className="text-xs leading-relaxed text-slate-500">
+                换浏览器或换手机后，输入邀请码和<strong>之前相同的昵称</strong>即可回到原工作区，不会重复创建账号。
+              </p>
+              <div>
+                <label className="text-sm font-medium text-brand-700/80">邀请码</label>
+                <input
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                  placeholder="6 位邀请码"
+                  maxLength={6}
+                  className="glass-input mt-1 w-full px-4 py-3 text-lg tracking-widest"
+                  required
+                />
+              </div>
+            </>
           )}
           <div>
             <label className="text-sm font-medium text-brand-700/80">你的昵称</label>
@@ -117,7 +122,7 @@ export default function JoinPage({ onAuthed }: Props) {
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <button type="submit" disabled={loading} className="btn-primary w-full py-3 disabled:opacity-50">
-            {loading ? '处理中...' : mode === 'create' ? '创建工作区' : '加入'}
+            {loading ? '处理中...' : mode === 'create' ? '创建工作区' : '进入工作区'}
           </button>
         </form>
       </div>

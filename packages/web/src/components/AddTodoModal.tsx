@@ -39,9 +39,9 @@ export default function AddTodoModal({ open, onClose, onSubmit }: Props) {
         />
         <div className="mt-3 flex gap-2">
           {[
-            { v: 'high', l: '高', c: 'border-brand-300 bg-brand-50/80 text-brand-600' },
-            { v: 'medium', l: '中', c: 'border-accent-300 bg-accent-50/80 text-accent-500' },
-            { v: 'low', l: '低', c: 'border-white/70 bg-white/50 text-slate-500' },
+            { v: 'high', l: '高', c: 'border-brand-700 bg-brand-700 text-white' },
+            { v: 'medium', l: '中', c: 'border-brand-200 bg-brand-100/90 text-brand-600' },
+            { v: 'low', l: '低', c: 'border-slate-200/70 bg-white/95 text-slate-500' },
           ].map((p) => (
             <button
               key={p.v}
