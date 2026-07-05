@@ -4,8 +4,7 @@
 
 :root {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  color: #0f172a;
-  background: #f1f5f9;
+  color: #0c4a6e;
 }
 
 body {
@@ -19,4 +18,58 @@ body {
 
 .safe-bottom {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+@layer components {
+  .page-bg {
+    @apply min-h-dvh;
+    background:
+      radial-gradient(ellipse 80% 50% at 15% -10%, rgba(186, 230, 253, 0.65), transparent),
+      radial-gradient(ellipse 65% 45% at 95% 5%, rgba(249, 168, 212, 0.35), transparent),
+      linear-gradient(160deg, #e0f2fe 0%, #f0f9ff 45%, #fdf2f8 100%);
+  }
+
+  .glass-card {
+    @apply rounded-2xl border border-white/60 bg-white/55 shadow-glass backdrop-blur-xl;
+  }
+
+  .glass-header {
+    @apply border-b border-white/50 bg-white/65 shadow-sm backdrop-blur-xl;
+  }
+
+  .glass-bar {
+    @apply border-t border-white/50 bg-white/70 backdrop-blur-xl;
+  }
+
+  .glass-input {
+    @apply rounded-xl border border-white/70 bg-white/50 backdrop-blur-sm outline-none focus:border-brand-300 focus:ring-2 focus:ring-brand-200/50;
+  }
+
+  .btn-primary {
+    @apply rounded-xl bg-gradient-to-r from-brand-400 to-brand-600 font-medium text-white shadow-lg shadow-brand-300/40 active:from-brand-500 active:to-brand-700;
+  }
+
+  .btn-ghost {
+    @apply rounded-xl border border-white/70 bg-white/40 backdrop-blur-sm;
+  }
+
+  .chip-active {
+    @apply bg-gradient-to-r from-brand-400 to-brand-600 text-white shadow-md shadow-brand-200/50;
+  }
+
+  .chip-inactive {
+    @apply text-slate-500;
+  }
+
+  .invite-box {
+    @apply rounded-xl border border-brand-200/50 bg-gradient-to-br from-brand-50/90 to-accent-50/70 py-4 text-center backdrop-blur-sm;
+  }
+
+  .progress-track {
+    @apply h-2 overflow-hidden rounded-full bg-white/50 backdrop-blur-sm;
+  }
+
+  .progress-fill {
+    @apply h-full rounded-full bg-gradient-to-r from-brand-400 via-brand-500 to-accent-400 transition-all duration-300;
+  }
 }

@@ -22,7 +22,7 @@ export default function App() {
 
   if (authed === null) {
     return (
-      <div className="flex min-h-dvh items-center justify-center text-slate-500">
+      <div className="page-bg flex min-h-dvh items-center justify-center text-brand-600/60">
         加载中...
       </div>
     );

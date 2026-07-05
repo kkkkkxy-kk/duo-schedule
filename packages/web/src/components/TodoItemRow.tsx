@@ -2,9 +2,9 @@ import type { Todo } from '../types';
 import LikeButton from './LikeButton';
 
 const PRIORITY_STYLE: Record<string, string> = {
-  high: 'bg-red-100 text-red-600',
-  medium: 'bg-amber-100 text-amber-700',
-  low: 'bg-slate-100 text-slate-500',
+  high: 'bg-brand-100/80 text-brand-600 border border-brand-200/50',
+  medium: 'bg-accent-50/80 text-accent-500 border border-accent-200/50',
+  low: 'bg-white/50 text-slate-500 border border-white/60',
 };
 
 const PRIORITY_LABEL: Record<string, string> = {
@@ -25,7 +25,7 @@ export default function TodoItemRow({ todo, editable, onUpdate, onLike, onHighli
   const statusIcon = todo.status === 'highlight' ? '⭐' : todo.status === 'done' ? '✅' : '⬜';
 
   return (
-    <li className="flex items-start gap-2 rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-2.5">
+    <li className="flex items-start gap-2 rounded-xl border border-white/60 bg-white/40 px-3 py-2.5 backdrop-blur-sm">
       {todo.isMine && editable ? (
         <button
           type="button"
@@ -46,8 +46,8 @@ export default function TodoItemRow({ todo, editable, onUpdate, onLike, onHighli
         <div className="flex items-start justify-between gap-2">
           <p
             className={`text-sm leading-snug ${
-              todo.status !== 'pending' ? 'text-slate-500 line-through' : 'text-slate-800'
-            } ${todo.status === 'highlight' ? '!text-slate-800 !line-through-none' : ''}`}
+              todo.status !== 'pending' ? 'text-slate-500 line-through' : 'text-brand-900/80'
+            } ${todo.status === 'highlight' ? '!text-accent-600 !line-through-none' : ''}`}
           >
             {todo.description}
           </p>
@@ -57,15 +57,11 @@ export default function TodoItemRow({ todo, editable, onUpdate, onLike, onHighli
         </div>
 
         {todo.status === 'highlight' && todo.highlight && (
-          <p className="mt-1 text-xs text-amber-700">✨ {todo.highlight}</p>
+          <p className="mt-1 text-xs text-accent-600">✨ {todo.highlight}</p>
         )}
 
         {todo.isMine && editable && todo.status === 'done' && (
-          <button
-            type="button"
-            onClick={() => onHighlight(todo.id)}
-            className="mt-1 text-xs text-brand-600"
-          >
+          <button type="button" onClick={() => onHighlight(todo.id)} className="mt-1 text-xs text-accent-500">
             标记为亮点完成
           </button>
         )}

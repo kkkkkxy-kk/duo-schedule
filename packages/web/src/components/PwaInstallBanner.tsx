@@ -37,20 +37,20 @@ export default function PwaInstallBanner() {
 
   return (
     <div className="mx-auto max-w-lg px-4 pt-3">
-      <div className="flex items-center gap-3 rounded-2xl bg-brand-50 px-4 py-3 text-sm">
+      <div className="flex items-center gap-3 rounded-2xl border border-brand-200/40 bg-gradient-to-r from-brand-50/80 to-accent-50/60 px-4 py-3 text-sm backdrop-blur-md">
         <span className="text-xl">📲</span>
         <div className="min-w-0 flex-1">
           <p className="font-medium text-brand-700">添加到主屏幕</p>
-          <p className="text-xs text-brand-600/80">像 App 一样快速打开</p>
+          <p className="text-xs text-accent-500/80">像 App 一样快速打开</p>
         </div>
         <button
           type="button"
           onClick={() => void handleInstall()}
-          className="shrink-0 rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-medium text-white"
+          className="btn-primary shrink-0 px-3 py-1.5 text-xs"
         >
           安装
         </button>
-        <button type="button" onClick={handleDismiss} className="shrink-0 text-slate-400">
+        <button type="button" onClick={handleDismiss} className="shrink-0 text-brand-300">
           ✕
         </button>
       </div>

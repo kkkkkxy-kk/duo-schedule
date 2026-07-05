@@ -58,11 +58,7 @@ export default function TodayPage() {
     setTodos((list) =>
       list.map((t) =>
         t.id === id
-          ? {
-              ...t,
-              likedByMe: !liked,
-              likeCount: liked ? t.likeCount - 1 : t.likeCount + 1,
-            }
+          ? { ...t, likedByMe: !liked, likeCount: liked ? t.likeCount - 1 : t.likeCount + 1 }
           : t,
       ),
     );
@@ -96,13 +92,13 @@ export default function TodayPage() {
 
   if (loading && todos.length === 0 && members.length === 0) {
     return (
-      <div className="flex min-h-dvh items-center justify-center text-slate-500">加载中...</div>
+      <div className="page-bg flex min-h-dvh items-center justify-center text-brand-600/60">加载中...</div>
     );
   }
 
   return (
-    <div className="min-h-dvh bg-slate-100 pb-28">
-      <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/90 backdrop-blur">
+    <div className="page-bg pb-28">
+      <header className="glass-header sticky top-0 z-10">
         <PwaInstallBanner />
         <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
           <div>
@@ -110,17 +106,17 @@ export default function TodayPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate((d) => addDays(d, -1))}
-                className="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100"
+                className="rounded-lg px-2 py-1 text-brand-400 hover:bg-white/40"
                 aria-label="前一天"
               >
                 ‹
               </button>
-              <h1 className="text-lg font-bold text-slate-800">{formatDateLabel(selectedDate)}</h1>
+              <h1 className="text-lg font-bold text-brand-700">{formatDateLabel(selectedDate)}</h1>
               <button
                 type="button"
                 onClick={() => setSelectedDate((d) => addDays(d, 1))}
                 disabled={selectedDate >= todayStr()}
-                className="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 disabled:opacity-30"
+                className="rounded-lg px-2 py-1 text-brand-400 hover:bg-white/40 disabled:opacity-30"
                 aria-label="后一天"
               >
                 ›
@@ -132,13 +128,13 @@ export default function TodayPage() {
                 value={selectedDate}
                 max={todayStr()}
                 onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
-                className="rounded border border-slate-200 px-2 py-0.5 text-xs text-slate-600"
+                className="glass-input rounded-lg px-2 py-0.5 text-xs text-brand-700/70"
               />
               {!isToday && (
                 <button
                   type="button"
                   onClick={() => setSelectedDate(todayStr())}
-                  className="text-xs text-brand-600"
+                  className="text-xs text-accent-500"
                 >
                   回到今日
                 </button>
@@ -149,11 +145,11 @@ export default function TodayPage() {
             <button
               type="button"
               onClick={() => void copySummary()}
-              className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600"
+              className="btn-ghost px-3 py-1.5 text-xs font-medium text-brand-600"
             >
               复制群消息
             </button>
-            <Link to="/settings" className="rounded-lg p-2 text-slate-500">
+            <Link to="/settings" className="rounded-lg p-2 text-brand-400">
               ⚙️
             </Link>
           </div>
@@ -163,7 +159,7 @@ export default function TodayPage() {
             type="button"
             onClick={() => setFilterMine(false)}
             className={`rounded-lg px-3 py-1 text-xs font-medium ${
-              !filterMine ? 'bg-brand-600 text-white' : 'text-slate-500'
+              !filterMine ? 'chip-active' : 'chip-inactive'
             }`}
           >
             双人视图
@@ -172,7 +168,7 @@ export default function TodayPage() {
             type="button"
             onClick={() => setFilterMine(true)}
             className={`ml-2 rounded-lg px-3 py-1 text-xs font-medium ${
-              filterMine ? 'bg-brand-600 text-white' : 'text-slate-500'
+              filterMine ? 'chip-active' : 'chip-inactive'
             }`}
           >
             只看我的
@@ -196,9 +192,9 @@ export default function TodayPage() {
         ))}
 
         {members.length < 2 && isToday && (
-          <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-6 text-center">
+          <div className="glass-card border-dashed border-accent-200/50 p-6 text-center">
             <p className="text-sm text-slate-500">等待搭档加入工作区</p>
-            <Link to="/settings" className="mt-2 inline-block text-sm text-brand-600">
+            <Link to="/settings" className="mt-2 inline-block text-sm text-accent-500">
               查看邀请码 →
             </Link>
           </div>
@@ -206,13 +202,9 @@ export default function TodayPage() {
       </main>
 
       {isToday && (
-        <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur safe-bottom">
+        <div className="glass-bar fixed bottom-0 left-0 right-0 px-4 py-3 safe-bottom">
           <div className="mx-auto max-w-lg">
-            <button
-              type="button"
-              onClick={() => setShowAdd(true)}
-              className="w-full rounded-2xl bg-brand-600 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand-600/25 active:bg-brand-700"
-            >
+            <button type="button" onClick={() => setShowAdd(true)} className="btn-primary w-full py-3.5 text-base font-semibold">
               ＋ 添加我的待办
             </button>
           </div>
@@ -230,7 +222,7 @@ export default function TodayPage() {
       />
 
       {toast && (
-        <div className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full bg-slate-800 px-4 py-2 text-sm text-white shadow-lg">
+        <div className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/40 bg-brand-600/90 px-4 py-2 text-sm text-white shadow-glass backdrop-blur-md">
           {toast}
         </div>
       )}

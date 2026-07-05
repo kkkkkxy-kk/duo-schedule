@@ -28,30 +28,27 @@ export default function UserSection({
   const isMe = userId === currentUserId;
 
   return (
-    <section className="rounded-2xl bg-white p-4 shadow-sm">
+    <section className="glass-card p-4">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-lg">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-brand-100 to-accent-100 text-lg shadow-sm">
             {isMe ? '🙋' : '👤'}
           </span>
           <div>
-            <h2 className="font-semibold text-slate-800">
+            <h2 className="font-semibold text-brand-700">
               {nickname}
-              {isMe && <span className="ml-1 text-xs font-normal text-slate-400">（我）</span>}
+              {isMe && <span className="ml-1 text-xs font-normal text-accent-400">（我）</span>}
             </h2>
             <p className="text-xs text-slate-500">
               {doneCount}/{total} 完成
             </p>
           </div>
         </div>
-        <span className="text-sm font-medium text-brand-600">{pct}%</span>
+        <span className="text-sm font-medium text-accent-500">{pct}%</span>
       </div>
 
-      <div className="mb-4 h-2 overflow-hidden rounded-full bg-slate-100">
-        <div
-          className="h-full rounded-full bg-brand-500 transition-all duration-300"
-          style={{ width: `${pct}%` }}
-        />
+      <div className="progress-track mb-4">
+        <div className="progress-fill" style={{ width: `${pct}%` }} />
       </div>
 
       {todos.length === 0 ? (

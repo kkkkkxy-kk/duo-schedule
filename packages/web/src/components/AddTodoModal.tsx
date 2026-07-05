@@ -22,33 +22,33 @@ export default function AddTodoModal({ open, onClose, onSubmit }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 safe-bottom">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-brand-900/15 p-4 backdrop-blur-sm safe-bottom">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl"
+        className="glass-card w-full max-w-lg p-5 shadow-glass-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-lg font-semibold text-slate-800">添加我的待办</h3>
+        <h3 className="text-lg font-semibold text-brand-700">添加我的待办</h3>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="今天要做什么？"
           rows={3}
-          className="mt-3 w-full resize-none rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-brand-500"
+          className="glass-input mt-3 w-full resize-none px-4 py-3"
           autoFocus
         />
         <div className="mt-3 flex gap-2">
           {[
-            { v: 'high', l: '高', c: 'border-red-300 bg-red-50 text-red-600' },
-            { v: 'medium', l: '中', c: 'border-amber-300 bg-amber-50 text-amber-700' },
-            { v: 'low', l: '低', c: 'border-slate-300 bg-slate-50 text-slate-600' },
+            { v: 'high', l: '高', c: 'border-brand-300 bg-brand-50/80 text-brand-600' },
+            { v: 'medium', l: '中', c: 'border-accent-300 bg-accent-50/80 text-accent-500' },
+            { v: 'low', l: '低', c: 'border-white/70 bg-white/50 text-slate-500' },
           ].map((p) => (
             <button
               key={p.v}
               type="button"
               onClick={() => setPriority(p.v)}
-              className={`flex-1 rounded-lg border py-2 text-sm font-medium ${
-                priority === p.v ? p.c : 'border-slate-200 text-slate-400'
+              className={`flex-1 rounded-lg border py-2 text-sm font-medium backdrop-blur-sm ${
+                priority === p.v ? p.c : 'border-white/50 text-slate-400'
               }`}
             >
               {p.l}
@@ -56,14 +56,10 @@ export default function AddTodoModal({ open, onClose, onSubmit }: Props) {
           ))}
         </div>
         <div className="mt-4 flex gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 rounded-xl border border-slate-200 py-3 text-slate-600"
-          >
+          <button type="button" onClick={onClose} className="btn-ghost flex-1 py-3 text-slate-600">
             取消
           </button>
-          <button type="submit" className="flex-1 rounded-xl bg-brand-600 py-3 font-medium text-white">
+          <button type="submit" className="btn-primary flex-1 py-3">
             添加
           </button>
         </div>
