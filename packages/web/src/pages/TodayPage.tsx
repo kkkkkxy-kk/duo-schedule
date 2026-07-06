@@ -53,6 +53,18 @@ export default function TodayPage() {
     setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
   }
 
+  async function handleDelete(id: string) {
+    const prev = todos;
+    setTodos((list) => list.filter((t) => t.id !== id));
+    try {
+      await api.deleteTodo(id);
+      showToast('已删除');
+    } catch (err) {
+      setTodos(prev);
+      showToast(err instanceof Error ? err.message : '删除失败');
+    }
+  }
+
   async function handleLike(id: string, liked: boolean) {
     const prev = todos.find((t) => t.id === id)!;
     setTodos((list) =>
@@ -188,6 +200,7 @@ export default function TodayPage() {
             onUpdate={handleUpdate}
             onLike={handleLike}
             onHighlight={setHighlightTodoId}
+            onDelete={isToday ? handleDelete : undefined}
           />
         ))}
 

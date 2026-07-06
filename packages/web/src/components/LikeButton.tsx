@@ -1,10 +1,24 @@
 interface Props {
   liked: boolean;
   count: number;
-  onToggle: () => void;
+  onToggle?: () => void;
+  readOnly?: boolean;
 }
 
-export default function LikeButton({ liked, count, onToggle }: Props) {
+export default function LikeButton({ liked, count, onToggle, readOnly }: Props) {
+  if (readOnly) {
+    if (count <= 0) return null;
+    return (
+      <div
+        className="flex shrink-0 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-red-500"
+        aria-label={`收到 ${count} 个赞`}
+      >
+        <span className="text-lg leading-none">❤️</span>
+        <span className="text-xs">{count}</span>
+      </div>
+    );
+  }
+
   return (
     <button
       type="button"

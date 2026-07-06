@@ -216,6 +216,19 @@ export async function todoRoutes(app: FastifyInstance) {
 
     return { liked: false, likeCount: getLikeCount(todo.id), likedByMe: false };
   });
+
+  app.delete<{ Params: { id: string } }>('/todos/:id', guard, async (req) => {
+    const { userId, workspaceId } = req.user!;
+    const todo = db
+      .prepare('SELECT id, user_id FROM todos WHERE id = ? AND workspace_id = ?')
+      .get(req.params.id, workspaceId) as { id: string; user_id: string } | undefined;
+
+    if (!todo) throw Object.assign(new Error('待办不存在'), { statusCode: 404 });
+    if (todo.user_id !== userId) throw Object.assign(new Error('只能删除自己的待办'), { statusCode: 403 });
+
+    db.prepare('DELETE FROM todos WHERE id = ?').run(todo.id);
+    return { ok: true };
+  });
 }
 
 function getLikeCount(todoId: string): number {

@@ -59,6 +59,11 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
+  deleteTodo: (id: string) =>
+    request<{ ok: boolean }>(`/todos/${id}`, {
+      method: 'DELETE',
+    }),
+
   likeTodo: (id: string) =>
     request<{ liked: boolean; likeCount: number; likedByMe: boolean }>(`/todos/${id}/like`, {
       method: 'POST',

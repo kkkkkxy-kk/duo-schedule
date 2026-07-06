@@ -10,6 +10,7 @@ interface Props {
   onUpdate: (id: string, body: { status?: string; highlight?: string }) => void;
   onLike: (id: string, liked: boolean) => void;
   onHighlight: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 export default function UserSection({
@@ -21,6 +22,7 @@ export default function UserSection({
   onUpdate,
   onLike,
   onHighlight,
+  onDelete,
 }: Props) {
   const doneCount = todos.filter((t) => t.status !== 'pending').length;
   const total = todos.length;
@@ -63,6 +65,7 @@ export default function UserSection({
               onUpdate={onUpdate}
               onLike={onLike}
               onHighlight={onHighlight}
+              onDelete={isMe ? onDelete : undefined}
             />
           ))}
         </ul>
