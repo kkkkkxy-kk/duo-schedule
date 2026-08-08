@@ -55,37 +55,25 @@ function Star({ filledTips, glowing, size = STAR_SIZE }: StarProps) {
       aria-hidden
     >
       <svg viewBox="0 0 24 24" width={size} height={size} className="overflow-visible">
-        {/* 底：白心 + 灰边；未点亮角保持白色 */}
-        <polygon
-          points={pointsAttr(GEO.outline)}
-          fill="#ffffff"
-          stroke="#64748b"
-          strokeWidth="1.6"
-          strokeLinejoin="round"
-        />
-        {/* 按角上色：第 1～5 角颜色由浅到深，一眼能看出进度 */}
-        {GEO.tips.map((tipPts, i) =>
-          i < tips ? (
-            <polygon
-              key={i}
-              points={pointsAttr(tipPts)}
-              fill={TIP_COLORS[i]}
-              stroke="#b45309"
-              strokeWidth="0.7"
-              strokeLinejoin="round"
-            />
-          ) : null,
-        )}
-        {/* 满星：统一深金 + 描边，更完整 */}
-        {isFull && (
+        {/* 未满星：白底 + 更细更浅的灰边 */}
+        {!isFull && (
           <polygon
             points={pointsAttr(GEO.outline)}
-            fill="#f59e0b"
-            stroke="#b45309"
-            strokeWidth="1.4"
+            fill="#ffffff"
+            stroke="#cbd5e1"
+            strokeWidth="0.9"
             strokeLinejoin="round"
           />
         )}
+        {/* 按角上色：已点亮角无描边 */}
+        {!isFull &&
+          GEO.tips.map((tipPts, i) =>
+            i < tips ? (
+              <polygon key={i} points={pointsAttr(tipPts)} fill={TIP_COLORS[i]} stroke="none" />
+            ) : null,
+          )}
+        {/* 满星：纯金色填充，无描边 */}
+        {isFull && <polygon points={pointsAttr(GEO.outline)} fill="#f59e0b" stroke="none" />}
       </svg>
     </span>
   );
