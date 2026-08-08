@@ -5,7 +5,7 @@ import AddTodoModal from '../components/AddTodoModal';
 import HighlightModal from '../components/HighlightModal';
 import PwaInstallBanner from '../components/PwaInstallBanner';
 import UserSection from '../components/UserSection';
-import { addDays, formatDateLabel, todayStr } from '../lib/date';
+import { addDays, formatDateLabel, isEditableDate, maxEditableDate, todayStr } from '../lib/date';
 import type { Member, Todo } from '../types';
 
 export default function TodayPage() {
@@ -20,6 +20,8 @@ export default function TodayPage() {
   const [toast, setToast] = useState('');
 
   const isToday = selectedDate === todayStr();
+  const canEdit = isEditableDate(selectedDate);
+  const maxDate = maxEditableDate();
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -127,7 +129,7 @@ export default function TodayPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate((d) => addDays(d, 1))}
-                disabled={selectedDate >= todayStr()}
+                disabled={selectedDate >= maxDate}
                 className="rounded-lg px-2 py-1 text-brand-400 hover:bg-white/40 disabled:opacity-30"
                 aria-label="后一天"
               >
@@ -138,7 +140,7 @@ export default function TodayPage() {
               <input
                 type="date"
                 value={selectedDate}
-                max={todayStr()}
+                max={maxDate}
                 onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
                 className="glass-input rounded-lg px-2 py-0.5 text-xs text-brand-700/70"
               />
@@ -150,6 +152,9 @@ export default function TodayPage() {
                 >
                   回到今日
                 </button>
+              )}
+              {canEdit && !isToday && (
+                <span className="text-xs text-brand-400">可提前编辑</span>
               )}
             </div>
           </div>
@@ -196,15 +201,15 @@ export default function TodayPage() {
             nickname={member.nickname}
             todos={todos.filter((t) => t.userId === member.id)}
             currentUserId={currentUserId}
-            editable={isToday}
+            editable={canEdit}
             onUpdate={handleUpdate}
             onLike={handleLike}
             onHighlight={setHighlightTodoId}
-            onDelete={isToday ? handleDelete : undefined}
+            onDelete={canEdit ? handleDelete : undefined}
           />
         ))}
 
-        {members.length < 2 && isToday && (
+        {members.length < 2 && canEdit && (
           <div className="glass-card border-dashed border-accent-200/50 p-6 text-center">
             <p className="text-sm text-slate-500">等待搭档加入工作区</p>
             <Link to="/settings" className="mt-2 inline-block text-sm text-accent-500">
@@ -214,11 +219,11 @@ export default function TodayPage() {
         )}
       </main>
 
-      {isToday && (
+      {canEdit && (
         <div className="glass-bar fixed bottom-0 left-0 right-0 px-4 py-3 safe-bottom">
           <div className="mx-auto max-w-lg">
             <button type="button" onClick={() => setShowAdd(true)} className="btn-primary w-full py-3.5 text-base font-semibold">
-              ＋ 添加我的待办
+              ＋ 添加{isToday ? '今日' : formatDateLabel(selectedDate)}待办
             </button>
           </div>
         </div>

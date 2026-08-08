@@ -4,8 +4,30 @@ import { db } from '../db/index.js';
 import { sendWxMessage } from '../push/wxpusher.js';
 import { authHook } from '../lib/hooks.js';
 
+const ADVANCE_EDIT_DAYS = 7;
+
 function todayStr(): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai' }).format(new Date());
+}
+
+function addDays(dateStr: string, days: number): string {
+  const d = new Date(dateStr + 'T12:00:00');
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function maxEditableDate(): string {
+  return addDays(todayStr(), ADVANCE_EDIT_DAYS);
+}
+
+function assertEditableDate(date: string) {
+  const today = todayStr();
+  if (date < today) {
+    throw Object.assign(new Error('不能编辑历史日期的待办'), { statusCode: 400 });
+  }
+  if (date > maxEditableDate()) {
+    throw Object.assign(new Error(`最多只能提前安排 ${ADVANCE_EDIT_DAYS} 天的日程`), { statusCode: 400 });
+  }
 }
 
 interface TodoRow {
@@ -95,6 +117,7 @@ export async function todoRoutes(app: FastifyInstance) {
     if (!['high', 'medium', 'low'].includes(priority)) {
       throw Object.assign(new Error('优先级无效'), { statusCode: 400 });
     }
+    assertEditableDate(date);
 
     const id = nanoid();
     db.prepare(`
@@ -119,11 +142,12 @@ export async function todoRoutes(app: FastifyInstance) {
     async (req) => {
       const { userId } = req.user!;
       const todo = db
-        .prepare('SELECT id, user_id, status FROM todos WHERE id = ?')
-        .get(req.params.id) as { id: string; user_id: string; status: string } | undefined;
+        .prepare('SELECT id, user_id, status, date FROM todos WHERE id = ?')
+        .get(req.params.id) as { id: string; user_id: string; status: string; date: string } | undefined;
 
       if (!todo) throw Object.assign(new Error('待办不存在'), { statusCode: 404 });
       if (todo.user_id !== userId) throw Object.assign(new Error('只能修改自己的待办'), { statusCode: 403 });
+      assertEditableDate(todo.date);
 
       const { status, highlight } = req.body;
       if (status && !['pending', 'done', 'highlight'].includes(status)) {
@@ -220,11 +244,12 @@ export async function todoRoutes(app: FastifyInstance) {
   app.delete<{ Params: { id: string } }>('/todos/:id', guard, async (req) => {
     const { userId, workspaceId } = req.user!;
     const todo = db
-      .prepare('SELECT id, user_id FROM todos WHERE id = ? AND workspace_id = ?')
-      .get(req.params.id, workspaceId) as { id: string; user_id: string } | undefined;
+      .prepare('SELECT id, user_id, date FROM todos WHERE id = ? AND workspace_id = ?')
+      .get(req.params.id, workspaceId) as { id: string; user_id: string; date: string } | undefined;
 
     if (!todo) throw Object.assign(new Error('待办不存在'), { statusCode: 404 });
     if (todo.user_id !== userId) throw Object.assign(new Error('只能删除自己的待办'), { statusCode: 403 });
+    assertEditableDate(todo.date);
 
     db.prepare('DELETE FROM todos WHERE id = ?').run(todo.id);
     return { ok: true };
