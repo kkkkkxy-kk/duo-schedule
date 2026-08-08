@@ -14,9 +14,16 @@ export interface Todo {
   isMine: boolean;
 }
 
+export interface UserBadge {
+  completeDays: number;
+  fullStars: number;
+  filledTips: number;
+}
+
 export interface Member {
   id: string;
   nickname: string;
+  badge: UserBadge;
 }
 
 export interface MeResponse {

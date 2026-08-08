@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { nanoid } from 'nanoid';
 import { db } from '../db/index.js';
+import { getBadgesForWorkspace } from '../lib/badges.js';
 import { sendWxMessage } from '../push/wxpusher.js';
 import { authHook } from '../lib/hooks.js';
 
@@ -67,6 +68,7 @@ export async function todoRoutes(app: FastifyInstance) {
     const members = db
       .prepare('SELECT id, nickname FROM users WHERE workspace_id = ? ORDER BY created_at')
       .all(workspaceId) as unknown as { id: string; nickname: string }[];
+    const badges = getBadgesForWorkspace(workspaceId);
 
     const rows = db
       .prepare(`
@@ -93,7 +95,10 @@ export async function todoRoutes(app: FastifyInstance) {
 
     return {
       date,
-      members,
+      members: members.map((m) => ({
+        ...m,
+        badge: badges.get(m.id) ?? { completeDays: 0, fullStars: 0, filledTips: 0 },
+      })),
       todos: rows.map((r) => ({
         ...mapTodo(
           {

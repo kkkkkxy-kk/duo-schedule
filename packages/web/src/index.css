@@ -20,6 +20,21 @@ body {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
 
+.star-glow {
+  filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.85)) drop-shadow(0 0 6px rgba(245, 158, 11, 0.55));
+  animation: star-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes star-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.7)) drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 4px rgba(253, 224, 71, 0.95)) drop-shadow(0 0 10px rgba(245, 158, 11, 0.65));
+  }
+}
+
 @layer components {
   .page-bg {
     @apply min-h-dvh;

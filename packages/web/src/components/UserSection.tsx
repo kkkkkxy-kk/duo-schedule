@@ -1,9 +1,11 @@
-import type { Todo } from '../types';
+import type { Todo, UserBadge } from '../types';
+import BadgeRow from './StarBadge';
 import TodoItemRow from './TodoItemRow';
 
 interface Props {
   userId: string;
   nickname: string;
+  badge: UserBadge;
   todos: Todo[];
   currentUserId: string;
   editable: boolean;
@@ -13,9 +15,12 @@ interface Props {
   onDelete?: (id: string) => void;
 }
 
+const EMPTY_BADGE: UserBadge = { completeDays: 0, fullStars: 0, filledTips: 0 };
+
 export default function UserSection({
   userId,
   nickname,
+  badge = EMPTY_BADGE,
   todos,
   currentUserId,
   editable,
@@ -31,22 +36,29 @@ export default function UserSection({
 
   return (
     <section className="glass-card p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-brand-100 to-accent-100 text-lg shadow-sm">
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-100 to-accent-100 text-lg shadow-sm">
             {isMe ? '🙋' : '👤'}
           </span>
-          <div>
-            <h2 className="font-semibold text-brand-700">
-              {nickname}
-              {isMe && <span className="ml-1 text-xs font-normal text-accent-400">（我）</span>}
-            </h2>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <h2 className="font-semibold text-brand-700">
+                {nickname}
+                {isMe && <span className="ml-1 text-xs font-normal text-accent-400">（我）</span>}
+              </h2>
+              <BadgeRow
+                fullStars={badge.fullStars}
+                filledTips={badge.filledTips}
+                completeDays={badge.completeDays}
+              />
+            </div>
             <p className="text-xs text-slate-500">
               {doneCount}/{total} 完成
             </p>
           </div>
         </div>
-        <span className="text-sm font-medium text-accent-500">{pct}%</span>
+        <span className="shrink-0 text-sm font-medium text-accent-500">{pct}%</span>
       </div>
 
       <div className="progress-track mb-4">

@@ -44,25 +44,48 @@ export default function TodayPage() {
     void load(selectedDate);
   }, [selectedDate, load]);
 
+  async function refreshDay(date: string) {
+    const data = await api.getTodos(date);
+    setMembers(data.members);
+    setTodos(data.todos);
+  }
+
   async function handleAdd(description: string, priority: string) {
-    const todo = await api.createTodo(description, priority, selectedDate);
-    setTodos((prev) => [...prev, todo]);
+    await api.createTodo(description, priority, selectedDate);
+    await refreshDay(selectedDate);
     showToast('已添加');
   }
 
   async function handleUpdate(id: string, body: { status?: string; highlight?: string }) {
-    const updated = await api.updateTodo(id, body);
-    setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
+    const prevBadge = members.find((m) => m.id === currentUserId)?.badge;
+    await api.updateTodo(id, body);
+    const data = await api.getTodos(selectedDate);
+    setMembers(data.members);
+    setTodos(data.todos);
+
+    if (body.status && body.status !== 'pending' && selectedDate <= todayStr()) {
+      const nextBadge = data.members.find((m) => m.id === currentUserId)?.badge;
+      if (nextBadge && prevBadge && nextBadge.completeDays > prevBadge.completeDays) {
+        if (nextBadge.filledTips === 0 && nextBadge.fullStars > prevBadge.fullStars) {
+          showToast('集齐 5 天！获得一颗金色五角星 ⭐');
+        } else {
+          showToast(`完成一天全部待办，星角 +1（${nextBadge.filledTips}/5）`);
+        }
+      }
+    }
   }
 
   async function handleDelete(id: string) {
     const prev = todos;
+    const prevMembers = members;
     setTodos((list) => list.filter((t) => t.id !== id));
     try {
       await api.deleteTodo(id);
+      await refreshDay(selectedDate);
       showToast('已删除');
     } catch (err) {
       setTodos(prev);
+      setMembers(prevMembers);
       showToast(err instanceof Error ? err.message : '删除失败');
     }
   }
@@ -199,6 +222,7 @@ export default function TodayPage() {
             key={member.id}
             userId={member.id}
             nickname={member.nickname}
+            badge={member.badge}
             todos={todos.filter((t) => t.userId === member.id)}
             currentUserId={currentUserId}
             editable={canEdit}
