@@ -1,67 +1,92 @@
-import { useId } from 'react';
+/** 正五角星几何：5 个外顶点 + 5 个内凹点（viewBox 0 0 24 24） */
+function buildStarGeometry(cx = 12, cy = 12, outerR = 10, innerR = 4.2) {
+  const outer: [number, number][] = [];
+  const inner: [number, number][] = [];
+  for (let i = 0; i < 5; i++) {
+    const oa = ((-90 + i * 72) * Math.PI) / 180;
+    const ia = ((-90 + 36 + i * 72) * Math.PI) / 180;
+    outer.push([cx + outerR * Math.cos(oa), cy + outerR * Math.sin(oa)]);
+    inner.push([cx + innerR * Math.cos(ia), cy + innerR * Math.sin(ia)]);
+  }
+  // 整星轮廓：O0-I0-O1-I1-...
+  const outline = outer.flatMap((o, i) => [o, inner[i]]);
+  // 每个角 = 外顶点 + 两侧内凹点
+  const tips = outer.map((o, i) => {
+    const prevInner = inner[(i + 4) % 5];
+    const nextInner = inner[i];
+    return [o, prevInner, nextInner] as [number, number][];
+  });
+  return { outline, tips };
+}
 
-/** 正五角星 path（viewBox 0 0 24 24，尖朝上） */
-const STAR_PATH =
-  'M12 2.2l2.9 6.1 6.7.9-4.9 4.6 1.2 6.6L12 17.1 6.1 20.4l1.2-6.6L2.4 9.2l6.7-.9L12 2.2z';
+const GEO = buildStarGeometry();
 
-const STAR_SIZE = 36;
-/** 最多直接展示的五角星数量（含左侧未点亮/进行中） */
+function pointsAttr(pts: [number, number][]) {
+  return pts.map((p) => p.join(',')).join(' ');
+}
+
+const STAR_SIZE = 25; // 原 36 的约 70%
 const MAX_VISIBLE = 5;
 
+/** 1～5 角用不同深浅金色，便于一眼分辨进度 */
+const TIP_COLORS = [
+  '#fef3c7', // 1 角：很浅金
+  '#fde68a', // 2 角
+  '#fbbf24', // 3 角
+  '#f59e0b', // 4 角
+  '#d97706', // 5 角：深金
+] as const;
+
 interface StarProps {
-  /** 0–5：金色填充的角数；5 为满星 */
+  /** 0–5：已点亮的角数 */
   filledTips: number;
   glowing?: boolean;
   size?: number;
 }
 
 function Star({ filledTips, glowing, size = STAR_SIZE }: StarProps) {
-  const uid = useId().replace(/:/g, '');
   const tips = Math.max(0, Math.min(5, filledTips));
-  const pct = (tips / 5) * 100;
-  const isEmpty = tips === 0;
+  const isFull = tips === 5;
 
   return (
     <span
-      className={`relative inline-block shrink-0 ${glowing && tips === 5 ? 'star-glow' : ''}`}
+      className={`relative inline-block shrink-0 ${glowing && isFull ? 'star-glow' : ''}`}
       style={{ width: size, height: size }}
       aria-hidden
     >
-      {/* 未点亮：白底 + 深灰描边，与金色满星区分开 */}
-      <svg viewBox="0 0 24 24" width={size} height={size} className="absolute inset-0 overflow-visible">
-        <path
-          d={STAR_PATH}
-          fill={isEmpty ? '#ffffff' : 'none'}
-          stroke={isEmpty ? '#64748b' : '#cbd5e1'}
-          strokeWidth={isEmpty ? '1.8' : '1.4'}
+      <svg viewBox="0 0 24 24" width={size} height={size} className="overflow-visible">
+        {/* 底：白心 + 灰边；未点亮角保持白色 */}
+        <polygon
+          points={pointsAttr(GEO.outline)}
+          fill="#ffffff"
+          stroke="#64748b"
+          strokeWidth="1.6"
           strokeLinejoin="round"
         />
-      </svg>
-      {tips > 0 && (
-        <span
-          className="absolute inset-0"
-          style={{
-            clipPath: `conic-gradient(from -90deg, #000 ${pct}%, transparent 0)`,
-          }}
-        >
-          <svg viewBox="0 0 24 24" width={size} height={size} className="overflow-visible">
-            <defs>
-              <linearGradient id={`star-gold-${uid}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#fde68a" />
-                <stop offset="50%" stopColor="#fbbf24" />
-                <stop offset="100%" stopColor="#d97706" />
-              </linearGradient>
-            </defs>
-            <path
-              d={STAR_PATH}
-              fill={`url(#star-gold-${uid})`}
-              stroke="#f59e0b"
-              strokeWidth="1.2"
+        {/* 按角上色：第 1～5 角颜色由浅到深，一眼能看出进度 */}
+        {GEO.tips.map((tipPts, i) =>
+          i < tips ? (
+            <polygon
+              key={i}
+              points={pointsAttr(tipPts)}
+              fill={TIP_COLORS[i]}
+              stroke="#b45309"
+              strokeWidth="0.7"
               strokeLinejoin="round"
             />
-          </svg>
-        </span>
-      )}
+          ) : null,
+        )}
+        {/* 满星：统一深金 + 描边，更完整 */}
+        {isFull && (
+          <polygon
+            points={pointsAttr(GEO.outline)}
+            fill="#f59e0b"
+            stroke="#b45309"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+          />
+        )}
+      </svg>
     </span>
   );
 }
